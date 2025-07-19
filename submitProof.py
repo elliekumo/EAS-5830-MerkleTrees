@@ -8,6 +8,8 @@ from eth_account.messages import encode_defunct
 from eth_utils import keccak
 from web3 import Web3
 from web3.middleware import ExtraDataToPOAMiddleware  # Necessary for POA chains
+from eth_account.messages import encode_defunct
+from eth_account import Account
 
 
 def merkle_assignment():
@@ -184,11 +186,11 @@ def send_signed_msg(proof, random_leaf):
 
     # TODO YOUR CODE HERE
     # Convert leaf to bytes32 (if not already)
-    if isinstance(random_leaf, int):
-        leaf_bytes = random_leaf.to_bytes((random_leaf.bit_length() + 7) // 8, byteorder='big')
-        leaf_hash = keccak(leaf_bytes)
-    else:
-        leaf_hash = keccak(random_leaf)
+    # if isinstance(random_leaf, int):
+    #     leaf_bytes = random_leaf.to_bytes((random_leaf.bit_length() + 7) // 8, byteorder='big')
+    #     leaf_hash = keccak(leaf_bytes)
+    # else:
+    #     leaf_hash = keccak(random_leaf)
 
     # Load contract
     contract = w3.eth.contract(address=address, abi=abi)
