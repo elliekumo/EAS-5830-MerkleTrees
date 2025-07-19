@@ -166,8 +166,8 @@ def sign_challenge(challenge):
     message = encode_defunct(text=challenge)
 
     # Sign the message using the private key
-    # eth_sig_obj = acct.sign_message(message)
-    eth_sig_obj = eth_account.Account.sign_message(message, eth_sk)
+    eth_sig_obj = acct.sign_message(message)
+    # eth_sig_obj = eth_account.Account.sign_message(message, eth_sk)
 
     return addr, eth_sig_obj.signature.hex()
 
@@ -186,11 +186,11 @@ def send_signed_msg(proof, random_leaf):
 
     # TODO YOUR CODE HERE
     # Convert leaf to bytes32 (if not already)
-    # if isinstance(random_leaf, int):
-    #     leaf_bytes = random_leaf.to_bytes((random_leaf.bit_length() + 7) // 8, byteorder='big')
-    #     leaf_hash = keccak(leaf_bytes)
-    # else:
-    #     leaf_hash = keccak(random_leaf)
+    if isinstance(random_leaf, int):
+        leaf_bytes = random_leaf.to_bytes((random_leaf.bit_length() + 7) // 8, byteorder='big')
+        leaf_hash = keccak(leaf_bytes)
+    else:
+        leaf_hash = keccak(random_leaf)
 
     # Load contract
     contract = w3.eth.contract(address=address, abi=abi)
@@ -198,7 +198,7 @@ def send_signed_msg(proof, random_leaf):
     # Prepare the transaction
     nonce = w3.eth.get_transaction_count(acct.address)
 
-    tx = contract.functions.submit(proof, random_leaf).build_transaction({
+    tx = contract.functions.submit(proof, leaf_hash).build_transaction({
         'from': acct.address,
         'nonce': nonce,
         'gas': 300000,
@@ -206,9 +206,9 @@ def send_signed_msg(proof, random_leaf):
     })
 
     # sign and send
-    # signed_tx = w3.eth.account.sign_transaction(tx, private_key=acct.key)
+    signed_tx = w3.eth.account.sign_transaction(tx, private_key=acct.key)
     # tx_hash = w3.eth.send_raw_transaction(signed_tx.rawTransaction)
-    signed_tx = acct.sign_transaction(tx)
+    # signed_tx = acct.sign_transaction(tx)
     tx_hash = w3.eth.send_raw_transaction(signed_tx.rawTransaction)
 
     print("Transaction sent! TX hash:", tx_hash.hex())
