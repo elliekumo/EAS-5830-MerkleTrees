@@ -99,16 +99,15 @@ def build_merkle(leaves):
 
     while len(tree[-1]) > 1:
         current_level = tree[-1]
+
+        # ensure even number of nodes
+        if len(current_level) % 2 == 1:
+            current_level = current_level + [current_level[-1]]
+
         next_level = []
-
-        # ensure even number of nodes by duplicating the last if necessary
-        level = current_level.copy()
-        if len(level) % 2 == 1:
-            level.append(level[-1])
-
-        for i in range(0, len(level), 2):
-            left = level[i]
-            right = level[i + 1]
+        for i in range(0, len(current_level), 2):
+            left = current_level[i]
+            right = current_level[i + 1]
             combined = hash_pair(left, right)
             next_level.append(combined)
 
@@ -126,16 +125,18 @@ def prove_merkle(merkle_tree, random_indx):
     """
     merkle_proof = []
     # TODO YOUR CODE HERE
-    index = random_indx
 
     for level in range(len(merkle_tree) - 1):
         level_nodes = merkle_tree[level]
+
         # find sibling index
-        sibling_index = index ^ 1   # flip last bit: even/odd
-        if sibling_index < len(level_nodes):
-            merkle_proof.append(level_nodes[sibling_index])
+        if len(level_nodes) % 2 == 1:
+            level_nodes = level_nodes + [level_nodes[-1]]
+
+        sibling_index = random_indx ^ 1   # flip last bit: even/odd
+        merkle_proof.append(level_nodes[sibling_index])
         # move to the next level, parent
-        index = index // 2
+        random_indx = random_indx // 2
 
     return merkle_proof
 
