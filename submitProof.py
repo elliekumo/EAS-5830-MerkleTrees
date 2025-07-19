@@ -37,10 +37,10 @@ def merkle_assignment():
     addr, sig = sign_challenge(challenge)
 
     if sign_challenge_verify(challenge, addr, sig):
-        tx_hash = '0x'
+        # tx_hash = '0x'
         # TODO, when you are ready to attempt to claim a prime (and pay gas fees),
         #  complete this method and run your code with the following line un-commented
-        # tx_hash = send_signed_msg(proof, leaves[random_leaf_index])
+        tx_hash = send_signed_msg(proof, leaves[random_leaf_index])
         print("Your TX hash:", tx_hash)
 
 
@@ -165,6 +165,7 @@ def sign_challenge(challenge):
 
     # Sign the message using the private key
     eth_sig_obj = acct.sign_message(message)
+    # eth_sig_obj = eth_account.Account.sign_message(message, eth_sk)
 
     return addr, eth_sig_obj.signature.hex()
 
