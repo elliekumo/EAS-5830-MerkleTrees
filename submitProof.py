@@ -188,7 +188,7 @@ def send_signed_msg(proof, random_leaf):
         leaf_bytes = random_leaf.to_bytes((random_leaf.bit_length() + 7) // 8, byteorder='big')
         leaf_hash = keccak(leaf_bytes)
     else:
-        leaf_hash = random_leaf
+        leaf_hash = keccak(random_leaf)
 
     # Load contract
     contract = w3.eth.contract(address=address, abi=abi)
