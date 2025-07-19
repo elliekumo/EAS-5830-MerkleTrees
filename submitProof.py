@@ -95,22 +95,25 @@ def build_merkle(leaves):
 
     #TODO YOUR CODE HERE
     # start with the leaves as the first level
-    tree = [leaves] # level 0: leaves
+    tree = [leaves] # start with the leaves as level 0
 
+    # Building upper levels until there is only one root node
     while len(tree[-1]) > 1:
-        current_level = tree[-1]
+        level = tree[-1]
 
-        # ensure even number of nodes
-        nodes = current_level[:]
-        if len(nodes) % 2 == 1:
-            nodes.append(nodes[-1])
+        # if number of nodes is odd, duplicate the last node
+        if len(level) % 2 == 1:
+            level = level + [level[-1]]
 
-        next_level = []
-        for i in range(0, len(nodes), 2):
-            combined = hash_pair(nodes[i], nodes[i + 1])
-            next_level.append(combined)
+        parent_level = []
 
-        tree.append(next_level)
+        # combine each pair of nodes using bash_pair and add to parent level
+        for i in range(0, len(level), 2):
+            combined = hash_pair(level[i], level[i + 1])
+            parent_level.append(combined)
+
+        # append the new parent level to the tree
+        tree.append(parent_level)
 
     return tree
 
@@ -124,29 +127,20 @@ def prove_merkle(merkle_tree, random_indx):
     """
     merkle_proof = []
     # TODO YOUR CODE HERE
+    index = random_indx  # start at the leaf index
 
-    for level in range(len(merkle_tree) - 1):
-        level_nodes = merkle_tree[level]
+    for level in range(len(merkle_tree) - 1):  # Exclude the root level
+        nodes = merkle_tree[level]
 
-        if random_indx % 2 == 0:
-            sibling_index = random_indx + 1
-        else:
-            sibling_index = random_indx - 1
+        # If the level has an odd number of nodes, duplicate the last one for pairing
+        if len(nodes) % 2 == 1:
+            nodes = nodes + [nodes[-1]]
 
-        if sibling_index >= len(level_nodes):
-            sibling_index = random_indx
+        sibling_index = index ^ 1   # flip last bit: even/odd
+        merkle_proof.append(nodes[sibling_index])
 
-        merkle_proof.append(level_nodes[sibling_index])
-        random_indx //= 2
-
-        # # find sibling index
-        # if len(level_nodes) % 2 == 1:
-        #     level_nodes = level_nodes + [level_nodes[-1]]
-        #
-        # sibling_index = random_indx ^ 1   # flip last bit: even/odd
-        # merkle_proof.append(level_nodes[sibling_index])
-        # # move to the next level, parent
-        # random_indx = random_indx // 2
+        # move to the next level, parent
+        index = index // 2
 
     return merkle_proof
 
