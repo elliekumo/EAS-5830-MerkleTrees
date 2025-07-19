@@ -39,11 +39,11 @@ def merkle_assignment():
     addr, sig = sign_challenge(challenge)
 
     if sign_challenge_verify(challenge, addr, sig):
-        # tx_hash = '0x'
+        tx_hash = '0x'
         # TODO, when you are ready to attempt to claim a prime (and pay gas fees),
         #  complete this method and run your code with the following line un-commented
         tx_hash = send_signed_msg(proof, leaves[random_leaf_index])
-        print("Your TX hash:", tx_hash)
+        # print("Your TX hash:", tx_hash)
 
 
 def generate_primes(num_primes):
@@ -166,8 +166,8 @@ def sign_challenge(challenge):
     message = encode_defunct(text=challenge)
 
     # Sign the message using the private key
-    eth_sig_obj = acct.sign_message(message)
-    # eth_sig_obj = eth_account.Account.sign_message(message, eth_sk)
+    # eth_sig_obj = acct.sign_message(message)
+    eth_sig_obj = eth_account.Account.sign_message(message, eth_sk)
 
     return addr, eth_sig_obj.signature.hex()
 
@@ -202,19 +202,16 @@ def send_signed_msg(proof, random_leaf):
         'from': acct.address,
         'nonce': nonce,
         'gas': 300000,
-        'gasPrice': w3.to_wei('10', 'gwei')
+        'gasPrice': w3.to_wei('5', 'gwei')
     })
 
     # sign and send
     signed_tx = w3.eth.account.sign_transaction(tx, private_key=acct.key)
-    # tx_hash = w3.eth.send_raw_transaction(signed_tx.rawTransaction)
-    # signed_tx = acct.sign_transaction(tx)
     tx_hash = w3.eth.send_raw_transaction(signed_tx.rawTransaction)
 
     print("Transaction sent! TX hash:", tx_hash.hex())
 
     return tx_hash.hex()
-    # return tx_hash
 
 
 # Helper functions that do not need to be modified
