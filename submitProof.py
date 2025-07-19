@@ -76,13 +76,14 @@ def convert_leaves(primes_list):
     """
 
     # TODO YOUR CODE HERE
-    hashes = []
-    for leaf in primes_list:
-        b = leaf.to_bytes((leaf.bit_length() + 7) // 8, byteorder='big')
-        h = keccak(b)
-        hashes.append(h)
+    # hashes = []
+    # for leaf in primes_list:
+    #     b = leaf.to_bytes((leaf.bit_length() + 7) // 8, byteorder='big')
+    #     h = keccak(b)
+    #     hashes.append(h)
 
-    return hashes
+    # return hashes
+    return [prime.to_bytes(32, byteorder='big') for prime in primes_list]
 
 
 def build_merkle(leaves):
