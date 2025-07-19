@@ -166,8 +166,8 @@ def sign_challenge(challenge):
     message = encode_defunct(text=challenge)
 
     # Sign the message using the private key
-    eth_sig_obj = acct.sign_message(message)
-    # eth_sig_obj = eth_account.Account.sign_message(message, eth_sk)
+    # eth_sig_obj = acct.sign_message(message)
+    eth_sig_obj = eth_account.Account.sign_message(message, eth_sk)
 
     return addr, eth_sig_obj.signature.hex()
 
@@ -198,7 +198,7 @@ def send_signed_msg(proof, random_leaf):
     # Prepare the transaction
     nonce = w3.eth.get_transaction_count(acct.address)
 
-    tx = contract.functions.submit(proof, leaf_hash).build_transaction({
+    tx = contract.functions.submit(proof, random_leaf).build_transaction({
         'from': acct.address,
         'nonce': nonce,
         'gas': 300000,
